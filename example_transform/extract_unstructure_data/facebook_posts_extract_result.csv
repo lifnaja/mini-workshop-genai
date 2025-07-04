@@ -1,0 +1,9 @@
+post_id,brand,model,sub_model,year,gear,price,mileage,color
+1,Honda,Jazz,1.5 SV,2017,Automatic,389000,164000,
+1,Honda,Civic,FK Hatchback Turbo RS,,,,,Black
+2,Honda,HR-V,1.8 RS SUV,2018,Automatic,469000,,
+2,Toyota,Vellfire,2.4 Z G Edition Van,2014,Automatic,869000,,
+2,Nissan,Teana,2.0 XL Sedan,2018,Automatic,429000,,
+2,Nissan,X-Trail,2.0 E Hybrid SUV,2018,Automatic,489000,,
+2,MG,HS,1.5 Turbo X Sunroof SUV,2020,Automatic,399000,,
+2,Mercedes-Benz,GLA200,1.6 W156 Urban SUV,2015,Automatic,589000,,
