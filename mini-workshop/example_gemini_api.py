@@ -9,10 +9,10 @@ def generate():
 
     model = "gemini-2.5-flash-preview-05-20"
 
-    file_x = client.files.upload(file='cnbc_news.csv')
+    cnbc_news_file = client.files.upload(file='cnbc_news.csv')
 
     response = client.models.generate_content(
-        model=model, contents=["Summarize news from this file? in 100 word", file_x]
+        model=model, contents=["Summarize news from this file? in 100 word", cnbc_news_file]
     )
     print(response.text)
 
