@@ -9,7 +9,7 @@ wheels/
 # Virtual environments
 .venv
 
-mini-workshop/logs/dag*
+workshop/logs/dag*
 example_ingest/logs/dag*
 
 gcp_credentials.json
