@@ -1,1 +1,0 @@
-SELECT * FROM {{ source('car_prices', 'car_price_reference') }}

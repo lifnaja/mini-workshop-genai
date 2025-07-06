@@ -8,21 +8,6 @@
 ```
 พร้อมกับ upload file `sample_data_understand_schema.json`
 
-## Generate data source documentation
-
-**Prompt**
-```
-ช่วยสร้าง source.yml สำหรับ dbt จาก schema นี้ พร้อมเขียน description แต่ละ column ให้ด้วย
-ตัวอย่างข้อมูลและ column
-
-brand,model,sub_model,year,gear,new_price,used_price
-Xpeng,G6-EV,G6-EV Long Range RWD (CBU),2024,A,1599000,1310000
-Audi,A1,A1 1.5 35 TFSI Sportback S-Line (CBU) (MY19),2019,A,2149000,970000
-Deepal,E07-EV,E07-EV Performance AWD (CBU),2024,A,2099000,1770000
-Volvo,C30,C30 2.0 E,2012,A,1999000,370000
-Chevrolet,Allroader,Allroader 3.0 (MY08),2010,A,1045000,170000
-```
-
 ตัวอย่าง result จะอยู่ที่ `sample_project_dbt/models/source.yml`
 
 ## Generate Mock Data

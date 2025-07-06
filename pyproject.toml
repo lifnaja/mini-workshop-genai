@@ -8,8 +8,6 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "dbt-core (>=1.10.3,<2.0.0)",
-    "dbt-duckdb (>=1.9.4,<2.0.0)",
     "google-genai (>=1.24.0,<2.0.0)",
     "pandas (>=2.3.0,<3.0.0)",
     "pytest (>=8.4.1,<9.0.0)",
