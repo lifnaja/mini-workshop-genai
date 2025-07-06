@@ -1,17 +1,5 @@
 
 ### Prompt 1
-บริษัทแห่งหนึ่งมีนักวิเคราะห์การลงทุนและเศรษฐกิจ (financial & market analyst) ที่ต้องตื่นแต่เช้า (4.00 น.) เพื่ออ่านข่าวต่างประเทศจากหลากหลายเว็บไซต์ หลังตลาดหุ้นอเมริกาปิดทำการในช่วงดึก จากนั้นจะต้องสรุปเนื้อหา วิเคราะห์แนวโน้ม และจัดทำรายงานก่อนเวลา 8.00 น. เพื่อส่งต่อให้ทีมอื่นนำไปจัดทำ infographic หรือบทความสำหรับลูกค้า
-
-ช่วย setup airflow dags ให้หน่อย โดยจะมี task ป
-จากโจทย์ ช่วย setup dags ใน airflow 3.0 ให้หน่อย โดยให้มี task ประมาณนี้
-task ที่ 1 scrape_cnbc_news_task ทำหน้าที่ scrape ข่าวจาก CNBC
-task ที่ 2 save_raw_to_gcs_task ทำหน้าที่ save ข่าวที่ scrape ลง GCS
-task ที่ 3 summarize_with_gemini_task ให้ Gemini สรุปข่าว
-task ที่ 4 save_summary_to_gcs_task save  ข่าวที่สรุปมาจาก AI ลง GCS
-
-โดยอยากจะให้เริ่มจากทำเป็นโครงโดยใช้  EmptyOperator  ก่อนที่จะเขียน  ฟังก็ชั่นจริงๆ
-
-
 ช่วย setup airflow dags ให้หน่อย โดยจะมี task โดยให้มี task ประมาณนี้
 task ที่ 1 scrape_cnbc_news_task ทำหน้าที่ scrape ข่าวจาก CNBC
 task ที่ 2 save_raw_to_gcs_task ทำหน้าที่ save ข่าวที่ scrape ลง GCS
