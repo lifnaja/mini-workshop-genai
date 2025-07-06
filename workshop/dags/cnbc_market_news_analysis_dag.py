@@ -15,7 +15,7 @@ import pandas as pd
 
 
 GCS_CONNECTION = "gcs_conn"
-GCS_BUCKET_NAME = "mini-project-news"
+GCS_BUCKET_NAME = "BUCKET_NAME"
 GEMINI_API_KEY = "GEMINI_API_KEY"
 
 def scrape_cnbc_news():
