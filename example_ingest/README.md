@@ -16,7 +16,7 @@
 ## Ingestion Pipeline Design and Planning
 **Prompt**
 ```
-ช่วยออกแบบ DAG ของ Airflow สำหรับงาน ingest ข้อมูลของtransaction การซื้อขายแบบหุ้นแบบ end of day จาก SFTP  โดยจะโหลดมาไว้ที่ GCS ก่อนแล้วค่อยโหลดเข้า BigQuery
+ช่วยออกแบบ pipeline ใน airflow สำหรับงาน ingest ข้อมูลของการซื้อขายแบบหุ้นแบบ end of day จาก SFTP  โดยจะโหลดไฟล์ csv จาก SFTP มาไว้ที่ GCS ก่อนแล้วค่อยโหลดเข้า BigQuery
 ```
 
 

@@ -1,64 +1,74 @@
 from airflow import DAG
-from airflow.providers.google.cloud.transfers.sftp_to_gcs import SFTPToGCSOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
-import pendulum
+from airflow.providers.google.cloud.transfers.sftp_to_gcs import SFTPToGCSOperator
 from airflow.operators.python import PythonOperator
-import paramiko
+from datetime import timedelta
+import pendulum
 
-BUCKET_NAME = "sample-ingest"
-TABLE_ID = "deb05-463203.sample_ingest.eod_transactions"
+# --- Constant Variables ---
+# SFTP Configuration
+SFTP_SOURCE_PATH = '/mock_stock_transactions.csv'
 
+# GCS Configuration
+GCS_BUCKET_NAME = 'sample-ingest' # **เปลี่ยนเป็นชื่อ GCS bucket ของคุณ**
+GCS_DESTINATION_PATH = 'raw_data/eod_transactions/transactions.csv'
+
+# BigQuery Configuration
+BQ_PROJECT_ID = 'deb05-463203' # **เปลี่ยนเป็น Project ID ของคุณ**
+BQ_DATASET_ID = 'sample_ingest'     # **เปลี่ยนเป็น Dataset ID ของคุณ**
+BQ_TABLE_ID = 'eod_transactions' # **เปลี่ยนเป็น Table ID ของคุณ**
+BQ_DESTINATION_TABLE = f'{BQ_PROJECT_ID}.{BQ_DATASET_ID}.{BQ_TABLE_ID}'
+
+# Airflow Connection IDs
+SFTP_CONN_ID = 'sftp_conn'
+GCP_CONN_ID = 'gcp_conn'
+# --- End Constant Variables ---
+
+# กำหนด default_args สำหรับ DAG
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+}
+
+
+# กำหนด DAG
 with DAG(
-    dag_id="eod_stock_transaction_ingestion",
-    start_date=pendulum.datetime(2025, 1, 1, tz="Asia/Bangkok"),
-    schedule=None,
+    dag_id='eod_stock_data_ingestion',
+    default_args=default_args,
+    description='Ingest End-of-Day stock trading data from SFTP to GCS and then to BigQuery',
+    schedule='@daily',
+    start_date=pendulum.datetime(2023, 1, 1, tz="Asia/Bangkok"),
     catchup=False,
-    tags=["eod", "stock", "transaction", "sftp", "gcs", "bigquery"],
-    description="Ingest End-of-Day stock transaction data from SFTP to GCS and then to BigQuery.",
+    tags=['eod', 'stock', 'sftp', 'gcs', 'bigquery'],
 ) as dag:
 
-
-    def _check_sftp_file():
-        transport = paramiko.Transport(("sftp-server", 22))
-        transport.connect(username="demo", password="demo")
-        sftp = paramiko.SFTPClient.from_transport(transport)
-
-        try:
-            sftp.stat("/stock_trades.csv")  # ถ้าไม่เจอจะ raise
-            print("✅ File exists")
-        except FileNotFoundError:
-            print("❌ File not found")
-            
-        finally:
-            sftp.close()
-            transport.close()
-
-    check_sftp_file = PythonOperator(
-        task_id="check_sftp_file",
-        python_callable=_check_sftp_file,
+    # Task 1: โหลดไฟล์ CSV จาก SFTP ไปยัง GCS
+    # ตรวจสอบให้แน่ใจว่าได้ตั้งค่า Connection ID 'sftp_conn' และ 'gcp_conn' ใน Airflow UI แล้ว
+    transfer_sftp_to_gcs = SFTPToGCSOperator(
+        task_id='transfer_sftp_to_gcs',
+        sftp_conn_id=SFTP_CONN_ID,
+        source_path=SFTP_SOURCE_PATH,
+        destination_path=GCS_DESTINATION_PATH,
+        destination_bucket=GCS_BUCKET_NAME,
+        gcp_conn_id=GCP_CONN_ID,
     )
 
-    sftp_to_gcs = SFTPToGCSOperator(
-        task_id="sftp_to_gcs_eod_transactions",
-        source_path="/stock_trades.csv",
-        destination_bucket=BUCKET_NAME,
-        destination_path="raw_data/eod_transactions/transactions.csv",
-        gcp_conn_id="gcp_conn",
-        sftp_conn_id="sftp_connection",
-    )
-
-    
-    gcs_to_bigquery = GCSToBigQueryOperator(
-        task_id="gcs_to_bigquery_eod_transactions",
-        bucket=BUCKET_NAME,
-        source_objects=["raw_data/eod_transactions/transactions.csv"],
-        destination_project_dataset_table=TABLE_ID,
+    # Task 2: โหลดข้อมูลจาก GCS ไปยัง BigQuery
+    load_gcs_to_bigquery = GCSToBigQueryOperator(
+        task_id='load_gcs_to_bigquery',
+        bucket=GCS_BUCKET_NAME,
+        source_objects=[GCS_DESTINATION_PATH],
+        destination_project_dataset_table=BQ_DESTINATION_TABLE,
+        source_format='CSV',
         autodetect=True,
-        source_format="CSV",
         skip_leading_rows=1,
-        write_disposition="WRITE_TRUNCATE",
-        create_disposition="CREATE_IF_NEEDED",
-        gcp_conn_id="gcp_conn",
+        write_disposition='WRITE_TRUNCATE',
+        gcp_conn_id=GCP_CONN_ID,
     )
 
-    check_sftp_file >> sftp_to_gcs  >> gcs_to_bigquery
+    # กำหนดลำดับการทำงานของ Tasks
+    transfer_sftp_to_gcs >> load_gcs_to_bigquery

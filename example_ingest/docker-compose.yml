@@ -339,7 +339,7 @@ services:
     image: atmoz/sftp
     container_name: sftp-server
     ports:
-      - "2222:22"
+      - "2223:22"
     volumes:
       - ./sftp_upload:/home/demo
     command: demo:demo:::demo
